@@ -1,0 +1,11 @@
+{
+  "name": "smm2data",
+  "version": "0.1.0",
+  "description": "SMM2 Data Tools",
+  "main": "index.js",
+  "dependencies": {
+  },
+  "author": "switchjs",
+  "repository": "https://github.com/SwitchJS/smm2data",
+  "license": "Apache-2.0"
+}
