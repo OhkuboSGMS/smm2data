@@ -57,3 +57,21 @@ Byte at offset `0x200`:
 
 16-bit unsigned integer at address `0x04`.
 
+### Auto-Scroll
+
+Byte at offset `0x201`:
+
+| File Value | Auto Scroll |
+|:----------:|:------------|
+|   `0x00`   | None        |
+|   `0x01`   | Slow        |
+|   `0x02`   | Normal      |
+|   `0x03`   | Fast        |
+|   `0x04`   | Custom      |
+
+Custom Auto-Scrolling is implemented with Waypoints stored as Objects.
+
+Scrolling speed of first segment stored in low 2 bits at offset 0x0E.
+
+Scrolling speed for subsequent segments are stored in the object offset 0x0E in
+bits 2-3 (mask 0x0C)
