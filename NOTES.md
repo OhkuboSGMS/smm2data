@@ -36,7 +36,11 @@ Two ASCII characters at offsets `0xF1` and `0xF2`:
 |    `WU`    | NSMBU      |
 |    `3W`    | SM3DW      |
 
-**Course Theme**
+**Timer**
+
+16-bit unsigned integer at address `0x04`.
+
+### Course Theme
 
 Byte at offset `0x200`:
 
@@ -53,9 +57,14 @@ Byte at offset `0x200`:
 |   `0x08`   | Sky          |
 |   `0x09`   | Forest       |
 
-**Timer**
+Forest and Castle in Main Game Styles have parameters for the water/lava level
 
-16-bit unsigned integer at address `0x04`.
+| Address | Interpretation                                  |
+|:--------|:------------------------------------------------|
+| `0x204` | Final Height of water/lava (in tiles)           |
+| `0x205` | Mode: 0 = fixed, 1 = one-way, 2 = oscillating   |
+| `0x206` | Speed: 0 = none, 1 = slow, 2 = medium, 3 = fast |
+| `0x207` | Starting height of water/level (in tiles)       |
 
 ### Auto-Scroll
 
