@@ -13,39 +13,50 @@ const smm2data = (function() {
     "Forest"
   ];
 
-  const AutoScrollNames = [
-    "None",
-    "Slow",
-    "Normal",
-    "Fast",
-    "Custom"
-  ];
+  const SpeedNames  = [ "None", "Slow", "Normal", "Fast", "Custom"];
+  const MotionNames = [ "None", "OneWay", "TwoWay" ];
+  const CCCatNames  = [ "None", "Parts", "Status", "Action" ];
 
   const UInt16ValAt = (a, idx) => ( a[idx] | (a[idx+1]<<8) ) >>> 0;
   const UInt32ValAt = (a, idx) => ( a[idx] | (a[idx+1]<<8) | (a[idx+2]<<16) | (a[idx+3]<<24) ) >>> 0;
   const ASCIIString = (buf) => Array.from({length: buf.length}, (_, i) => String.fromCharCode(buf[i])).join("");
   const UCS2String  = (buf) => Array.from({length: buf.length/2}, (_, i) => String.fromCharCode(buf[2*i] + (buf[2*i+1]<<8))).join("");
+  const UCS2StringTrimmed = (buf) => UCS2String(buf).replace(/\x00.*$/,"");
 
   function parse_liquid(buf) {
     return {
       Final: buf[0x204],
       Start: buf[0x207],
-      Motion: ["Fixed", "OneWay", "TwoWay"][buf[0x205]] || "??",
-      Speed: ["Fixed", "Slow", "Normal", "Fast"][buf[0x206]] || "??"
+      Motion: MotionNames[buf[0x205]] || "??",
+      Speed: SpeedNames[buf[0x206]] || "??"
     }
+  }
+
+  function parse_clear_cond(buf) {
+    const o = {
+      Category: CCCatNames[buf[0x0F]]||"??",
+      Type: UInt32ValAt(buf, 0x10).toString(16)
+    };
+    if(o.Category == "Parts") o.Value = UInt16ValAt(buf, 0x06);
+    return o;
   }
 
   function parse_course_data(buf) {
     const o = {};
     o.Info = {};
-    o.Info.Name = UCS2String(buf.slice(0xF4, 0x134)).replace(/\x00.*$/,"");
+    o.Info.Name = UCS2StringTrimmed(buf.slice(0xF4, 0x134));
+    const desc = UCS2StringTrimmed(buf.slice(0x136, 0x1CC));
+    if(desc) o.Info.Description = desc;
     o.Info.CreationDate = new Date(UInt16ValAt(buf, 0x08), buf[0x0a] - 1, buf[0x0b], buf[0x0c], buf[0x0d], 0, 0 );
     o.Info.GameStyle = ASCIIString(buf.slice(0xF1, 0xF3));
     o.Info.CourseTheme = CourseThemeNames[buf[0x200]];
     if(buf[0x200] == 2 || buf[0x200] == 9) o.Info.Liquid = parse_liquid(buf);
     o.Info.Timer = UInt16ValAt(buf, 4);
-    o.Info.AutoScroll = AutoScrollNames[buf[0x201]];
-    if(o.Info.AutoScroll == "Custom") o.Info.ASData = parse_auto_scroll(buf);
+    if(buf[0x0F] != 0) o.Info.Clear = parse_clear_cond(buf);
+    if(buf[0x201] != 0) {
+      o.Info.AutoScroll = SpeedNames[buf[0x201]];
+      if(o.Info.AutoScroll == "Custom") o.Info.ASData = parse_auto_scroll(buf);
+    }
     return o;
   }
 

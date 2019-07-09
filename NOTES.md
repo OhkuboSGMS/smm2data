@@ -14,6 +14,11 @@ Information deduced from test course data
 64-byte (32 logical character) UCS-2 string starting at offset `0xF4`.
 Characters after the first null character are discarded.
 
+**Course Description**
+
+150-byte (75 logical character) UCS-2 string starting at offset `0x136`
+Characters after the first null character are discarded.
+
 **Course Creation Date**
 
 | Offset (sz) | Field  |
@@ -65,6 +70,31 @@ Forest and Castle in Main Game Styles have parameters for the water/lava level
 | `0x205` | Mode: 0 = fixed, 1 = one-way, 2 = oscillating   |
 | `0x206` | Speed: 0 = none, 1 = slow, 2 = medium, 3 = fast |
 | `0x207` | Starting height of water/level (in tiles)       |
+
+### Clear Condition
+
+Byte at offset `0x0F` refers to the tab in the clear condition window:
+
+| File Value | Clear Type |
+|:-----------|:-----------|
+| 0x00       | "None"     |
+| 0x01       | "Parts"    |
+| 0x02       | "Status"   |
+| 0x03       | "Action"   |
+
+32-bit unsigned integer at offset 0x10 identifies the clear condition.  It is a
+CRC-32 checksum of the name of an internal identifier.  Verified values:
+
+| Checksum | T | Internal Name  | Condition                     |
+|:---------|:--|:---------------|:------------------------------|
+|`7f07acbf`| 1 | EnemyKuribo    | defeating at least ## Goombas |
+|`f55b3863`| 1 | Coin           | grabbing at least ## Coins    |
+|`66477be4`| 2 | ObjectPowBlock | holding a POW block           |
+|`08327ae6`| 3 | Land           | without landing               |
+|`1664515a`| 3 | Damage         | without taking damage         |
+
+16-bit unsigned integer at offset 0x06 is the clear parameter.  It applies
+only to "Parts" clear conditions.  It is clamped at 999.
 
 ### Auto-Scroll
 
