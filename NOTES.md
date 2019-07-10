@@ -126,9 +126,11 @@ X-Coordinate: 32-bit unsigned integer at offset `0x00`
 
 Y-Coordinate: 32-bit unsigned integer at offset `0x04`
 
-The position appears to be the centerpoint of the object assuming the grid is
+
+The position appears to be the centerpoint of the tile assuming the grid is
 160 units wide and 160 units tall.  For example, a `1 x 1` block positioned at
-the bottom of the grid has Y-coordinate `80` rather than `0`.
+the bottom of the grid has Y-coordinate `80` rather than `0`.  The origin is the
+lower-left corner of the canvas.
 
 Width: 8-bit unsigned integer at offset `0x0A`
 

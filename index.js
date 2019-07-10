@@ -85,8 +85,8 @@ const smm2data = (() => {
       };
       if((obj.RawFlags>>1) & 1) obj.Wings = true;
       if((obj.RawFlags>>15) & 1) obj.Parachute = true;
-      obj.TileX = (UInt32ValAt(obj_buf, 0x00) - obj.Width * 80) / 160;
-      obj.TileY = (UInt32ValAt(obj_buf, 0x04) - obj.Height * 80) / 160;
+      obj.TileX = (UInt32ValAt(obj_buf, 0x00) - 80) / 160;
+      obj.TileY = (UInt32ValAt(obj_buf, 0x04) - 80) / 160;
       //obj.RawFlags &= ~(1<<1);
       //obj.RawFlags &= ~(1<<15);
       //obj.RawFlags &= ~(1<<18);
