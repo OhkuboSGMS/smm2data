@@ -72,9 +72,10 @@ const smm2data = (() => {
     for(let i = 0; i < cnt; ++i) {
       const o = {
         TileX: buf[0x249a4 + 4*i],
-        TileY: buf[0x249a4 + 4*i+ 1]
+        TileY: buf[0x249a4 + 4*i+ 1],
+        TileFlags: UInt16ValAt(buf, 0x249a4 + 4*i + 2)
       };
-      if(o.TileX >= 7) out.push(o);
+      out.push(o);
     }
     return out;
   };
