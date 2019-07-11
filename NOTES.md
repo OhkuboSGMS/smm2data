@@ -45,6 +45,20 @@ Two ASCII characters at offsets `0xF1` and `0xF2`:
 
 16-bit unsigned integer at address `0x04`.
 
+**Positions**
+
+Start Y: Byte at offset `0x00`
+
+End Y: Byte at offset `0x01`
+
+X distance: 16-bit unsigned integer at address `0x02`.  Interpreted as 10 * X
+position of the goal starting from the left.
+
+Game reserves 7 blocks at the start and 10 blocks at the end.  Total canvas
+width is (X distance + 95) / 10.
+
+Height is 27 tiles.
+
 ### Course Theme
 
 Byte at offset `0x200`:
@@ -157,6 +171,28 @@ wide and 1 tile tall.
 | `0x46`| 10-Coin        | Wing, Parachute, !!          |
 | `0x5C`| Pink Coin      | (none)                       |
 
+#### Terrain
+
+| Value | M1 Obj Type    | Common Modifiers             |
+|------:|:---------------|------------------------------|
+| `0x04`| Block          | Wing                         |
+| `0x05`| ? Block        | Wing                         |
+| `0x06`| Hard Block     | Wing                         |
+| `0x0E`| Mushroom Plat  | !!                           |
+| `0x10`| Semisolid Plat | !!                           |
+| `0x11`| Bridge         | (none)                       |
+| `0x15`| Donut Block    | Wing                         |
+| `0x16`| Cloud Block    | Wing                         |
+| `0x17`| Note Block     | Wing, !!                     |
+| `0x1D`| Hidden Block   | Wing                         |
+| `0x2B`| Spike Trap     | (none)                       |
+| `0x3F`| Ice Block      | Wing                         |
+| `0x57`| Gentle Slope   | !!                           |
+| `0x58`| Steep Slope    | !!                           |
+
+Even though the selection height is 1, Bridge height is always 2.
+
+
 #### Miscellaneous
 
 | Value | Description          |
@@ -175,8 +211,29 @@ wide and 1 tile tall.
 
 Part-specific modifiers:
 
-| BitMask | Part        | Interpretation                |
-|--------:|:------------|:------------------------------|
-| `1<< 2` | Fire Flower | Superball Flower              |
-| `1<< 2` | Shoe Goomba | Stiletto                      |
-| `3<<18` | 10-Coin     | Value: 0 = 10, 1 = 30, 2 = 50 |
+| BitMask | Part           | Interpretation                |
+|--------:|:---------------|:------------------------------|
+| `1<< 2` | Fire Flower    | Superball Flower              |
+| `1<< 2` | Shoe Goomba    | Stiletto                      |
+| `1<< 2` | Note Block     | Super Note Block              |
+| `3<<18` | 10-Coin        | Value: 0 = 10, 1 = 30, 2 = 50 |
+| `3<<18` | Semisolid Plat | Style: 0, 1, 2                |
+| `3<<18` | Mushroom Plat  | Style: 0, 1, 2                |
+| `1<<20` | Gentle Slope   | Direction: 1 = `\`, 0 = `/`   |
+| `1<<20` | Steep Slope    | Direction: 1 = `\`, 0 = `/`   |
+| `1<<21` | Gentle Slope   | Maximum Length ? 1 = max      |
+| `1<<21` | Steep Slope    | Maximum Length ? 1 = max      |
+
+
+## Ground Tiles
+
+Ground Tiles are stored separately from primary objects.
+
+32-bit unsigned integer at offset `0x23C` is the number of ground tiles.
+The Tile data block starts at offset `0x249a4`.  Each tile is 4 bytes large:
+
+| Offset | Bytes | Interpretation        |
+|-------:|------:|:----------------------|
+| `0x00` |   `1` | X position (in tiles) |
+| `0x01` |   `1` | Y position (in tiles) |
+| `0x02` |   `2` | unknown               |

@@ -66,6 +66,19 @@ const smm2data = (() => {
     return o;
   };
 
+  const parse_tiles = (buf) => {
+    const out = [];
+    const cnt = UInt32ValAt(buf, 0x23C);
+    for(let i = 0; i < cnt; ++i) {
+      const o = {
+        TileX: buf[0x249a4 + 4*i],
+        TileY: buf[0x249a4 + 4*i+ 1]
+      };
+      if(o.TileX >= 7) out.push(o);
+    }
+    return out;
+  };
+
   const parse_objects = (buf) => {
     const o = [];
     //const obj_cnt = UInt32ValAt(buf, 0x21C);
@@ -112,12 +125,37 @@ const smm2data = (() => {
       o.Info.AutoScroll = SpeedNames[buf[0x201]];
       if(o.Info.AutoScroll == "Custom") o.Info.ASData = parse_auto_scroll(buf);
     }
+    o.Info.StartY = buf[0x0];
+    o.Info.EndY = buf[0x1];
+    o.Info.Height = 27;
+    o.Info.Width = (UInt16ValAt(buf, 0x2) + 95)/10;
     o.Objects = parse_objects(buf);
+    o.Tiles = parse_tiles(buf);
     return o;
   };
 
   const ObjectTypeNames = {};
   ObjectTypeNames["M1"] = {
+    /* Terrain */
+    0x04: "Block",
+    0x05: "? Block",
+    0x06: "Hard Block",
+    0x0E: "Mushroom Platform",
+    0x10: "Semisolid Platform",
+    0x11: "Bridge",
+    0x15: "Donut Block",
+    0x16: "Cloud Block",
+    0x17: "Note Block",
+    0x1D: "Hidden Block",
+    0x2B: "Spike Trap",
+    0x3F: "Ice Block",
+    0x57: "Gentle Slope",
+    0x58: "Steep Slope",
+
+    /* Enemies */
+    0x1C: "Buzzy Beetle",
+
+    /* Items */
     0x08: "Coin",
     0x14: "Super Mushroom",
     0x21: "1-Up Mushroom",
