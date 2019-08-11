@@ -130,6 +130,7 @@ const smm2data = (() => {
     o.Info.EndY = buf[0x1];
     o.Info.Height = 27;
     o.Info.Width = (UInt16ValAt(buf, 0x2) + 95)/10;
+    o.Info.Screen = buf[0x202]; //0 means no blocks above a certain line. This is for camera movement.
     o.Objects = parse_objects(buf);
     o.Tiles = parse_tiles(buf);
     return o;
